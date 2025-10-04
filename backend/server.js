@@ -4,7 +4,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
-const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -15,26 +14,22 @@ app.use(compression());
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100
 });
 app.use(limiter);
 
-// CORS configuration for production
+// CORS - allow all origins
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'https://your-app-name.vercel.app', // Your Vercel domain
-    process.env.FRONTEND_URL
-  ].filter(Boolean),
+  origin: true,
   credentials: true
 }));
 
-// Body parsing middleware
+// Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Database connection with production fallback
+// Database connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/financial-signals';
 
 mongoose.connect(MONGODB_URI, {
@@ -58,18 +53,28 @@ app.get('/api/health', (req, res) => {
     status: 'OK',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    environment: process.env.NODE_ENV
+    environment: process.env.NODE_ENV,
+    version: '1.0.0'
   });
 });
 
-// Serve frontend in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../frontend/dist')));
-  
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: '🚀 Financial Signals Backend API',
+    version: '1.0.0',
+    environment: process.env.NODE_ENV,
+    endpoints: {
+      auth: '/api/auth',
+      marketData: '/api/market-data',
+      news: '/api/news',
+      signals: '/api/signals',
+      backtesting: '/api/backtesting',
+      portfolio: '/api/portfolio',
+      health: '/api/health'
+    }
   });
-}
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -80,26 +85,20 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler for API routes
-app.use('/api/*', (req, res) => {
-  res.status(404).json({ error: 'API route not found' });
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({ error: 'Route not found' });
 });
 
-const PORT = process.env.PORT || 5000;
-
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Financial Signal Platform`);
-  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully');
-  server.close(() => {
-    mongoose.connection.close();
-    process.exit(0);
-  });
-});
-
+// Vercel requires module.exports for serverless functions
 module.exports = app;
+
+// Only listen if not in Vercel environment
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📊 Financial Signals Backend`);
+    console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
+}
