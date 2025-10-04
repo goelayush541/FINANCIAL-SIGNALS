@@ -1,12 +1,19 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Use environment variable for production, fallback to localhost for development
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (import.meta.env.MODE === 'production' 
+    ? 'https://your-app-name.vercel.app/api' 
+    : 'http://localhost:5000/api');
+
+console.log('API Base URL:', API_BASE_URL);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000, // 10 second timeout
 });
 
 // Add token to requests
@@ -23,17 +30,13 @@ api.interceptors.request.use(
   }
 );
 
-// Handle token expiration and invalid tokens
+// Handle token expiration
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Check if the error indicates we should clear the token
-      if (error.response.data?.clearToken) {
-        localStorage.removeItem('token');
-      }
-      
-      // Only redirect to login if we're not already on login page
+      localStorage.removeItem('token');
+      // Only redirect if we're not already on login page
       if (!window.location.pathname.includes('/login')) {
         window.location.href = '/login';
       }
@@ -66,9 +69,9 @@ export const backtestingAPI = {
 
 export const marketDataAPI = {
   getIntraday: (symbol, params) => api.get(`/market-data/intraday/${symbol}`, { params }),
-  getDaily: (symbol) => api.get(`/market-data/daily/${symbol}`),
   searchSymbols: (query) => api.get('/market-data/search', { params: { q: query } }),
   getBatchData: (symbols) => api.post('/market-data/batch', { symbols }),
+  getDaily: (symbol) => api.get(`/market-data/daily/${symbol}`),
 };
 
 export const newsAPI = {

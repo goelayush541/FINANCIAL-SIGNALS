@@ -10,13 +10,23 @@ export default defineConfig({
         target: 'http://localhost:5000',
         changeOrigin: true
       }
-    },
-    hmr: {
-      overlay: false // Disable HMR overlay to reduce noise
     }
   },
   build: {
     outDir: 'dist',
-    sourcemap: true
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          charts: ['recharts'],
+          utils: ['axios', 'date-fns']
+        }
+      }
+    }
+  },
+  // For Vercel deployment
+  define: {
+    'process.env': {}
   }
 })

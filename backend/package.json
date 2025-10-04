@@ -16,12 +16,12 @@
     "axios": "^1.5.0",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
-    "socket.io": "^4.7.2",
     "node-cron": "^3.0.2",
     "express-rate-limit": "^6.10.0",
     "helmet": "^7.0.0",
     "compression": "^1.7.4",
-    "moment": "^2.29.4"
+    "moment": "^2.29.4",
+    "snowflake-sdk": "^1.6.22"
   },
   "devDependencies": {
     "nodemon": "^3.0.1",
