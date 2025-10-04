@@ -16,6 +16,6 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "https://your-backend-url.vercel.app/api"
+    "VITE_API_URL": "https://financial-signals.vercel.app/api"
   }
 }
