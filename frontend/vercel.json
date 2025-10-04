@@ -2,14 +2,20 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
-      "use": "@vercel/static-build"
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/$1"
+      "dest": "frontend/dist/$1"
     }
-  ]
+  ],
+  "env": {
+    "VITE_API_URL": "https://financial-signals.vercel.app/api"
+  }
 }
