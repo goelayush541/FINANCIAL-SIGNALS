@@ -13,5 +13,5 @@ export default defineConfig({
   },
   // Important for Vercel
   publicDir: 'public',
-  base: './'
+  base: './index.html'
 })
