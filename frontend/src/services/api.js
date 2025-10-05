@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Use environment variable for production, fallback to localhost for development
-const API_BASE_URL = 'https://financial-signals.vercel.app/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://financial-signals.vercel.app/api';
 console.log('API Base URL:', API_BASE_URL);
 
 const api = axios.create({
