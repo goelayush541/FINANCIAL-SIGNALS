@@ -4,7 +4,7 @@
   "description": "Financial Signals Platform",
   "scripts": {
     "dev:frontend": "cd frontend && npm run dev",
-    "build:frontend": "cd frontend && npm run build",
+    "build": "cd frontend && npm run build",
     "preview:frontend": "cd frontend && npm run preview",
     "dev:backend": "cd backend && npm run dev",
     "start:backend": "cd backend && npm start",
