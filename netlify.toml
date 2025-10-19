@@ -1,0 +1,42 @@
+[build]
+  command = "cd frontend && npm run build"
+  publish = "frontend/dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# For SPA routing - handle client-side routes
+[[redirects]]
+  from = "/dashboard"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/signals"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/backtesting"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/market-data"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/news"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/portfolio"
+  to = "/index.html"
+  status = 200
